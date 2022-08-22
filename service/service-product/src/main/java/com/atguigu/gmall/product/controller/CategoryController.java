@@ -65,8 +65,8 @@ public class CategoryController {
     public Result<Object> saveAttrInfo(BaseAttrInfo baseAttrInfo){
         boolean b = baseAttrInfoService.save(baseAttrInfo);
         List<BaseAttrValue> list = baseAttrInfo.getAttrValueList();
-
-        if (b){
+        boolean b1 = baseAttrValueService.saveBatch(list);
+        if (b && b1){
             return Result.ok().code(200).message("成功");
         }else {
             return Result.fail().code(20001).message("添加失败");
