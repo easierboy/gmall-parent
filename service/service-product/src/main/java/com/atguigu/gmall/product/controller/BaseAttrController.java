@@ -2,6 +2,7 @@ package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.BaseAttrInfo;
+import com.atguigu.gmall.model.product.BaseAttrValue;
 import com.atguigu.gmall.product.service.BaseAttrInfoService;
 import com.atguigu.gmall.product.service.BaseAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,29 @@ public class BaseAttrController {
 
 
     /**
-     * 添加或修改平台属性
+     * 保存属性信息
      * @param baseAttrInfo
      * @return
+     *
+     * 取出前端发送的请求体中的数据 @RequestBody
+     * BaseAttrInfo 封装前端提交来的所有数据
      */
     @PostMapping("/saveAttrInfo")
     public Result saveAttrInfo(@RequestBody BaseAttrInfo baseAttrInfo){
-        // 前台数据都被封装到该对象中baseAttrInfo
+        // 平台属性新增
         baseAttrInfoService.saveAttrInfo(baseAttrInfo);
         return Result.ok();
+    }
+
+    /**
+     * 根据
+     * 根据属性id获取属性所有属性值
+     * @param attrId
+     * @return
+     */
+    @GetMapping("/getAttrValueList/{attrId}")
+    public Result getAttrValueList(@PathVariable("attrId")Long attrId){
+        List<BaseAttrValue> list = baseAttrValueService.getAttrValueList(attrId);
+        return Result.ok(list);
     }
 }
