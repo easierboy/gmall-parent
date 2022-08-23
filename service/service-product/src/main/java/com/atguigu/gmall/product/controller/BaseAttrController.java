@@ -2,7 +2,6 @@ package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.BaseAttrInfo;
-import com.atguigu.gmall.model.product.BaseAttrValue;
 import com.atguigu.gmall.product.service.BaseAttrInfoService;
 import com.atguigu.gmall.product.service.BaseAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,13 @@ public class BaseAttrController {
     @Autowired
     BaseAttrValueService baseAttrValueService;
 
+    /**
+     * 查询平台属性
+     * @param c1Id 一级分类id
+     * @param c2Id 二级分类id
+     * @param c3Id 三级分类id
+     * @return
+     */
     @GetMapping("/attrInfoList/{c1Id}/{c2Id}/{c3Id}")
     public Result attrInfoList(@PathVariable("c1Id")Long c1Id,
                                @PathVariable("c2Id")Long c2Id,
@@ -29,17 +35,15 @@ public class BaseAttrController {
     }
 
 
-
+    /**
+     * 添加或修改平台属性
+     * @param baseAttrInfo
+     * @return
+     */
     @PostMapping("/saveAttrInfo")
-    public Result saveAttrInfo(BaseAttrInfo baseAttrInfo){
-        boolean b = baseAttrInfoService.save(baseAttrInfo);
-        List<BaseAttrValue> list = baseAttrInfo.getAttrValueList();
-        boolean b1 = baseAttrValueService.saveBatch(list);
-        if (b && b1){
-            return Result.ok().code(200).message("成功");
-        }else {
-            return Result.fail().code(20001).message("添加失败");
-        }
-
+    public Result saveAttrInfo(@RequestBody BaseAttrInfo baseAttrInfo){
+        // 前台数据都被封装到该对象中baseAttrInfo
+        baseAttrInfoService.saveAttrInfo(baseAttrInfo);
+        return Result.ok();
     }
 }

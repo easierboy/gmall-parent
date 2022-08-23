@@ -22,4 +22,13 @@ public class BaseAttrInfoServiceImpl extends ServiceImpl<BaseAttrInfoMapper, Bas
         List<BaseAttrInfo> list = baseAttrInfoMapper.getAttrInfoAndValueByCategoryId(c1Id,c2Id,c3Id);
         return list;
     }
+
+    @Override
+    public void saveAttrInfo(BaseAttrInfo baseAttrInfo) {
+        if (baseAttrInfo.getId() != null){
+            baseAttrInfoMapper.updateById(baseAttrInfo);
+        }else {
+            baseAttrInfoMapper.insert(baseAttrInfo);
+        }
+    }
 }
