@@ -10,17 +10,16 @@ spring:
     sender:
       type: web
 
+#简单请求 ：配置跨域
   cloud:
     gateway:
       globalcors:
         cors-configurations:
           '[/**]': #只要有人处理请求了，这个跨域就能生效
-            allowedOrigins: #允许所有地址来源跨域
-              - "*"
-            allowedMethods: #允许所有请求方式跨域
-              - "*"
-
-
+            allowedOrigins: "*" #允许所有地址来源跨域
+            allowedMethods: "*" #允许所有请求方式跨域
+            allowedHeaders: "*" #解决复杂跨域问题
+            allowCredentials: true
       #所有的网关路由规则
       routes:
         - id: product_route # 以 /admin/product 开头的所有请求都lb(loadbalancer)转给service-product

@@ -9,5 +9,5 @@ import java.util.List;
 public interface BaseAttrInfoService extends IService<BaseAttrInfo>{
 
 
-    List<BaseAttrInfo> attrInfoList(Long c1Id, Long c2Id, Long c3Id);
+    List<BaseAttrInfo> getAttrInfoAndValueByCategoryId(Long c1Id, Long c2Id, Long c3Id);
 }

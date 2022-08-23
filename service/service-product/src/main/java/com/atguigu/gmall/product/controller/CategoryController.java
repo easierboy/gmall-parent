@@ -21,11 +21,7 @@ public class CategoryController {
     @Autowired
     BaseCategory3Service baseCategory3Service;
 
-    @Autowired
-    BaseAttrInfoService baseAttrInfoService;
 
-    @Autowired
-    BaseAttrValueService baseAttrValueService;
     /**
      * 获取所有的一级分类
      * @return
@@ -51,26 +47,5 @@ public class CategoryController {
     public Result getCategory3(@PathVariable("c2Id")Long c2Id){
         List<BaseCategory3> list = baseCategory3Service.getCategory2Child(c2Id);
         return Result.ok(list);
-    }
-
-    @GetMapping("/attrInfoList/{c1Id}/{c2Id}/{c3Id}")
-    public Result attrInfoList(@PathVariable("c1Id")Long c1Id,
-                               @PathVariable("c2Id")Long c2Id,
-                               @PathVariable("c3Id")Long c3Id){
-        List<BaseAttrInfo> list = baseAttrInfoService.attrInfoList(c1Id,c2Id,c3Id);
-        return Result.ok(list);
-    }
-
-    @PostMapping("/saveAttrInfo")
-    public Result<Object> saveAttrInfo(BaseAttrInfo baseAttrInfo){
-        boolean b = baseAttrInfoService.save(baseAttrInfo);
-        List<BaseAttrValue> list = baseAttrInfo.getAttrValueList();
-        boolean b1 = baseAttrValueService.saveBatch(list);
-        if (b && b1){
-            return Result.ok().code(200).message("成功");
-        }else {
-            return Result.fail().code(20001).message("添加失败");
-        }
-
     }
 }

@@ -13,4 +13,28 @@
     <!--@mbg.generated-->
     id, attr_name, category_id, category_level
   </sql>
+
+<!--autoMapping="true" 开启驼峰自动映射-->
+    <resultMap id="AttrInfoAndValue"
+            type="com.atguigu.gmall.model.product.BaseAttrInfo"
+            autoMapping="true">
+        <id column="id" property="id"></id>
+<!--        <result column="attr_name" property="attrName"></result>-->
+<!--        <result column="category_id" property="categoryId"></result>-->
+<!--        <result column="category_level" property="categoryLevel"></result>-->
+        <collection property="attrValueList" ofType="com.atguigu.gmall.model.product.BaseAttrValue" autoMapping="true">
+            <id column="vid" property="id"></id>
+<!--            <result column="value_name" property="valueName"></result>-->
+<!--            <result column="attr_id" property="attrId"></result>-->
+        </collection>
+    </resultMap>
+
+    <select id="getAttrInfoAndValueByCategoryId" resultMap="AttrInfoAndValue">
+        select bai.*,bav.id vid,bav.value_name,bav.attr_id from base_attr_info bai
+            left join base_attr_value bav
+                on bai.id=bav.attr_id
+        where (bai.category_level=1 and bai.category_id=#{c1Id})
+            or (bai.category_level=2 and bai.category_id=#{c2Id})
+            or (bai.category_level=3 and bai.category_id=#{c3Id})
+    </select>
 </mapper>
