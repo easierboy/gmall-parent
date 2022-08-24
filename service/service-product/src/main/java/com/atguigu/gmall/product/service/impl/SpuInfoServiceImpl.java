@@ -3,9 +3,11 @@ package com.atguigu.gmall.product.service.impl;
 import com.atguigu.gmall.model.product.SpuImage;
 import com.atguigu.gmall.model.product.SpuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
+import com.atguigu.gmall.model.product.SpuSaleAttrValue;
 import com.atguigu.gmall.product.mapper.SpuImageMapper;
 import com.atguigu.gmall.product.mapper.SpuInfoMapper;
 import com.atguigu.gmall.product.mapper.SpuSaleAttrMapper;
+import com.atguigu.gmall.product.mapper.SpuSaleAttrValueMapper;
 import com.atguigu.gmall.product.service.SpuInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
     SpuImageMapper spuImageMapper;
     @Autowired
     SpuSaleAttrMapper spuSaleAttrMapper;
-
+    @Autowired
+    SpuSaleAttrValueMapper spuSaleAttrValueMapper;
     /**
      * 添加spu
      * @param spuInfo
@@ -40,6 +43,13 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
         }
         //循环添加spu销售信息
         for (SpuSaleAttr spuSaleAttr : spuSaleAttrList){
+            List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
+            //循环添加每个销售信息对应的内容
+            for (SpuSaleAttrValue spuSaleAttrValue : spuSaleAttrValueList){
+                spuSaleAttrValue.setSaleAttrName(spuSaleAttr.getSaleAttrName());
+                spuSaleAttrValue.setSpuId(spuInfo.getId());
+                spuSaleAttrValueMapper.insert(spuSaleAttrValue);
+            }
             spuSaleAttr.setSpuId(spuInfo.getId());
             spuSaleAttrMapper.insert(spuSaleAttr);
         }
