@@ -7,12 +7,24 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/admin/product")
 @RestController
 public class BaseTrademarkController {
 
     @Autowired
     BaseTrademarkService baseTrademarkService;
+
+    /**
+     * 获取所有品牌信息
+     * @return
+     */
+    @GetMapping("/baseTrademark/getTrademarkList")
+    public Result getTrademarkList(){
+        List<BaseTrademark> list = baseTrademarkService.list();
+        return Result.ok(list);
+    }
 
     /**
      * 分页查询品牌信息
