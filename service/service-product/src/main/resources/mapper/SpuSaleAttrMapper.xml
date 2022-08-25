@@ -21,7 +21,7 @@
   </resultMap>
 
   <select id="getSpuSaleAttrListById" resultMap="SpuSaleAttr">
-      select ssa.*,ssav.id sId, ssav.spu_id, ssav.base_sale_attr_id, ssav.sale_attr_value_name, ssav.sale_attr_name
+      select ssa.*,ssav.id sId, ssav.sale_attr_value_name
           from spu_sale_attr ssa left join spu_sale_attr_value ssav
           on ssa.spu_id = ssav.spu_id and ssa.base_sale_attr_id =ssav.base_sale_attr_id
           where ssa.spu_id=#{spuId};

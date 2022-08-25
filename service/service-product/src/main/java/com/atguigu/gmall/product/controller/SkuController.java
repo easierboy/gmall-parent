@@ -79,9 +79,7 @@ public class SkuController {
      */
     @GetMapping("/onSale/{skuId}")
     public Result onSale(@PathVariable("skuId") Long skuId){
-        SkuInfo skuInfo = skuInfoService.getById(skuId);
-        skuInfo.setIsSale(1);
-        skuInfoService.updateById(skuInfo);
+        skuInfoService.onSale(skuId);
         return Result.ok();
     }
 
@@ -90,9 +88,7 @@ public class SkuController {
      */
     @GetMapping("/cancelSale/{skuId}")
     public Result cancelSale(@PathVariable("skuId") Long skuId){
-        SkuInfo skuInfo = skuInfoService.getById(skuId);
-        skuInfo.setIsSale(0);
-        skuInfoService.updateById(skuInfo);
+        skuInfoService.cancelSale(skuId);
         return Result.ok();
     }
 }

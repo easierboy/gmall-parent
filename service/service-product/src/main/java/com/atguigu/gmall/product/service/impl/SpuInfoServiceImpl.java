@@ -36,23 +36,24 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
         spuInfoMapper.insert(spuInfo);
         List<SpuImage> spuImageList = spuInfo.getSpuImageList();
         List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
-        //循环修改spu图片信息
+        //循环回填spuId
         for (SpuImage spuImage : spuImageList){
             spuImage.setSpuId(spuInfo.getId());
         }
         //批量添加图片信息到数据库
         spuImageService.saveBatch(spuImageList);
-        //循环修改spu销售信息
+        //循环回填spuId
         for (SpuSaleAttr spuSaleAttr : spuSaleAttrList){
 
             List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
-            //循环修改每个销售信息对应的内容
+            //循环回填spuId和SaleAttrName
             for (SpuSaleAttrValue spuSaleAttrValue : spuSaleAttrValueList){
                 spuSaleAttrValue.setSaleAttrName(spuSaleAttr.getSaleAttrName());
                 spuSaleAttrValue.setSpuId(spuInfo.getId());
             }
-            spuSaleAttrValueService.saveBatch(spuSaleAttrValueList);
             //批量添加销售属性值信息到数据库
+            spuSaleAttrValueService.saveBatch(spuSaleAttrValueList);
+            //循环回填spuId
             spuSaleAttr.setSpuId(spuInfo.getId());
         }
         //批量添加销售属性名信息到数据库

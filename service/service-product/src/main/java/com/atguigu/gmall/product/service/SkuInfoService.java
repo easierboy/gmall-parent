@@ -10,4 +10,16 @@ public interface SkuInfoService extends IService<SkuInfo>{
      * @param skuInfo
      */
     void saveSkuInfo(SkuInfo skuInfo);
+
+    /**
+     * 上架商品
+     * @param skuId
+     */
+    void onSale(Long skuId);
+
+    /**
+     * 下架商品
+     * @param skuId
+     */
+    void cancelSale(Long skuId);
 }
