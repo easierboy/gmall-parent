@@ -20,9 +20,9 @@ public class SpuController {
      * @return
      */
     @GetMapping("/{pn}/{ps}")
-    public Result list(@PathVariable("pn")Integer pn,
-                       @PathVariable("ps")Integer ps,
-                       Long category3Id){
+    public Result list(@PathVariable("pn")Long pn,
+                       @PathVariable("ps")Long ps,
+                       @RequestParam("category3Id") Long category3Id){
         Page<SpuInfo> page = new Page<>(pn,ps);
         QueryWrapper<SpuInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("category3_id",category3Id);

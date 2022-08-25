@@ -19,3 +19,4 @@ minio:
   accessKey: admin
   secreKey: admin123456
   bucketName: gmall
+

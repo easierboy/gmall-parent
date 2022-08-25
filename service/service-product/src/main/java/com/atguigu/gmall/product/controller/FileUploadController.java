@@ -1,11 +1,14 @@
 package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.common.util.DateUtil;
+import com.atguigu.gmall.product.config.minio.MinioAutoConfiguration;
+import com.atguigu.gmall.product.config.minio.MinioProperties;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -16,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -24,17 +28,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/product")
 public class FileUploadController {
-    @Value("${minio.endpointUrl}")
-    private String endpointUrl;
 
-    @Value("${minio.accessKey}")
-    private String accessKey;
+    @Autowired
+    MinioAutoConfiguration minioAutoConfiguration;
+    @Autowired
+    MinioProperties minioProperties;
 
-    @Value("${minio.secreKey}")
-    private String secreKey;
-
-    @Value("${minio.bucketName}")
-    private String bucketName;
 
     /**
      * 文件上传：以二进制流 请求体中
@@ -46,25 +45,22 @@ public class FileUploadController {
     public Result fileUpload(@RequestPart("file")MultipartFile file){
 
         try {
-            //使用 MinIO 服务器游乐场、其访问密钥和密钥创建一个 minioClient
-            MinioClient minioClient =
-                    MinioClient.builder()
-                            .endpoint(endpointUrl)
-                            .credentials(accessKey, secreKey)
-                            .build();
+            MinioClient minioClient = minioAutoConfiguration.getMinioClient();
 
             // 查询储存桶是否存在，如果不存在，则制作bucketName存储桶。
             boolean found =
-                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioProperties.getBucketName()).build());
             if (!found) {
                 // Make a new bucket called bucketName.
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(minioProperties.getBucketName()).build());
             }else {
-                System.out.println("储存桶" + bucketName + "已经存在。");
+                System.out.println("储存桶" + minioProperties.getBucketName() + "已经存在。");
             }
 
+            //添加日期文件夹
+            String date = DateUtil.formatDate(new Date());
             //  定义一个文件的名称:名称不能重复！
-            String fileName = System.currentTimeMillis() + UUID.randomUUID().toString() + file.getOriginalFilename();
+            String fileName = date + "/" + System.currentTimeMillis() + UUID.randomUUID()+ file.getOriginalFilename();
 
             //方式二:文件上传uploadObject（只能用于普通文件File）
 //            //调用工具类将MultipartFile 转File
@@ -81,13 +77,13 @@ public class FileUploadController {
             //方式一:文件上传putObject
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(bucketName)
+                            .bucket(minioProperties.getBucketName())
                             .object(fileName)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .contentType(file.getContentType())
                     .build());
 
-            String url = endpointUrl + "/" + bucketName + "/" + fileName;
+            String url = minioProperties.getEndpointUrl() + "/" + minioProperties.getBucketName() + "/" + fileName;
             return Result.ok(url);
         } catch (Exception e) {
             e.printStackTrace();

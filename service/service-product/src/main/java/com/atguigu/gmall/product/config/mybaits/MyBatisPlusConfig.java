@@ -1,4 +1,4 @@
-package com.atguigu.gmall.product.config;
+package com.atguigu.gmall.product.config.mybaits;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;

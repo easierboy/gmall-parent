@@ -33,7 +33,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
     @Override
     public void saveSpuInfo(SpuInfo spuInfo) {
         //添加商品spuInfo信息
-        if (spuInfo != null) spuInfoMapper.insert(spuInfo);
+        spuInfoMapper.insert(spuInfo);
         List<SpuImage> spuImageList = spuInfo.getSpuImageList();
         List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
         //循环添加spu图片信息

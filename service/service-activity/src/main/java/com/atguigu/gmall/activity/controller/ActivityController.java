@@ -25,8 +25,8 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/activityInfo/{pn}/{ps}")
-    public Result activityInfo(@PathVariable("pn")Integer pn,
-                               @PathVariable("ps")Integer ps){
+    public Result activityInfo(@PathVariable("pn")Long pn,
+                               @PathVariable("ps")Long ps){
         Page<ActivityInfo> page = activityInfoService.page(new Page<>(pn, ps));
         return Result.ok(page);
     }
