@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.activity.mapper.ActivityRuleMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.activity.ActivityRule">
+    <!--@mbg.generated-->
+    <!--@Table activity_rule-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="condition_amount" jdbcType="DECIMAL" property="conditionAmount" />
+    <result column="condition_num" jdbcType="BIGINT" property="conditionNum" />
+    <result column="benefit_amount" jdbcType="DECIMAL" property="benefitAmount" />
+    <result column="benefit_discount" jdbcType="DECIMAL" property="benefitDiscount" />
+    <result column="benefit_level" jdbcType="BIGINT" property="benefitLevel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, activity_id, condition_amount, condition_num, benefit_amount, benefit_discount, 
+    benefit_level
+  </sql>
+</mapper>

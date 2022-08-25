@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.activity.mapper.CouponInfoMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.activity.CouponInfo">
+    <!--@mbg.generated-->
+    <!--@Table coupon_info-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="coupon_name" jdbcType="VARCHAR" property="couponName" />
+    <result column="coupon_type" jdbcType="VARCHAR" property="couponType" />
+    <result column="condition_amount" jdbcType="DECIMAL" property="conditionAmount" />
+    <result column="condition_num" jdbcType="BIGINT" property="conditionNum" />
+    <result column="activity_id" jdbcType="BIGINT" property="activityId" />
+    <result column="benefit_amount" jdbcType="DECIMAL" property="benefitAmount" />
+    <result column="benefit_discount" jdbcType="DECIMAL" property="benefitDiscount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="range_type" jdbcType="VARCHAR" property="rangeType" />
+    <result column="limit_num" jdbcType="INTEGER" property="limitNum" />
+    <result column="taken_count" jdbcType="INTEGER" property="takenCount" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="range_desc" jdbcType="VARCHAR" property="rangeDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, coupon_name, coupon_type, condition_amount, condition_num, activity_id, benefit_amount, 
+    benefit_discount, create_time, range_type, limit_num, taken_count, start_time, end_time, 
+    operate_time, expire_time, range_desc
+  </sql>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.activity.mapper.SeckillGoodsMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.activity.SeckillGoods">
+    <!--@mbg.generated-->
+    <!--@Table seckill_goods-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="spu_id" jdbcType="BIGINT" property="spuId" />
+    <result column="sku_id" jdbcType="BIGINT" property="skuId" />
+    <result column="sku_name" jdbcType="VARCHAR" property="skuName" />
+    <result column="sku_default_img" jdbcType="VARCHAR" property="skuDefaultImg" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="cost_price" jdbcType="DECIMAL" property="costPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="stock_count" jdbcType="INTEGER" property="stockCount" />
+    <result column="sku_desc" jdbcType="VARCHAR" property="skuDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, spu_id, sku_id, sku_name, sku_default_img, price, cost_price, create_time, check_time, 
+    `status`, start_time, end_time, num, stock_count, sku_desc
+  </sql>
+</mapper>
