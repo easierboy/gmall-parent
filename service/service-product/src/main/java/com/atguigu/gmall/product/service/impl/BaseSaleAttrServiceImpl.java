@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+
 import com.atguigu.gmall.model.product.BaseSaleAttr;
 import com.atguigu.gmall.product.mapper.BaseSaleAttrMapper;
 import com.atguigu.gmall.product.service.BaseSaleAttrService;

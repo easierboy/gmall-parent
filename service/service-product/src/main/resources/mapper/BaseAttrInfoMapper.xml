@@ -33,8 +33,13 @@
         select bai.*,bav.id vid,bav.value_name,bav.attr_id from base_attr_info bai
             left join base_attr_value bav
                 on bai.id=bav.attr_id
-        where (bai.category_level=1 and bai.category_id=#{c1Id})
-            or (bai.category_level=2 and bai.category_id=#{c2Id})
-            or (bai.category_level=3 and bai.category_id=#{c3Id})
+        <where>
+            <if test="c1Id != 0">
+               (bai.category_level=1 and bai.category_id=#{c1Id})</if>
+            <if test="c2Id != 0">
+            or (bai.category_level=2 and bai.category_id=#{c2Id})</if>
+            <if test="c3Id != 0">
+            or (bai.category_level=3 and bai.category_id=#{c3Id})</if>
+        </where>
     </select>
 </mapper>
