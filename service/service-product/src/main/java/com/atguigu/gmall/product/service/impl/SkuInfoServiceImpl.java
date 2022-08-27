@@ -1,17 +1,11 @@
 package com.atguigu.gmall.product.service.impl;
 
-import com.atguigu.gmall.model.product.SkuAttrValue;
-import com.atguigu.gmall.model.product.SkuImage;
-import com.atguigu.gmall.model.product.SkuInfo;
-import com.atguigu.gmall.model.product.SkuSaleAttrValue;
+import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.atguigu.gmall.model.to.SkuDetailTo;
 import com.atguigu.gmall.product.mapper.BaseCategory3Mapper;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
-import com.atguigu.gmall.product.service.SkuAttrValueService;
-import com.atguigu.gmall.product.service.SkuImageService;
-import com.atguigu.gmall.product.service.SkuInfoService;
-import com.atguigu.gmall.product.service.SkuSaleAttrValueService;
+import com.atguigu.gmall.product.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +26,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     BaseCategory3Mapper baseCategory3Mapper;
     @Autowired
     SkuImageService skuImageService;
+    @Autowired
+    SpuSaleAttrService spuSaleAttrService;
 
     /**
      * 添加sku
@@ -103,6 +99,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
         CategoryViewTo categoryViewTo = baseCategory3Mapper.getCategoryView(skuInfo.getCategory3Id());
         skuDetailTo.setCategoryView(categoryViewTo);
 
+        //商品（sku）所属的SPU当时定义的所有销售属性名值组合（固定好顺序）。
+        //          spu_sale_attr、spu_sale_attr_value
+        //          并标识出当前sku到底spu的那种组合，页面要有高亮框 sku_sale_attr_value
+        //查询当前sku对应的spu定义的所有销售属性名和值（固定好顺序）并且标记好当前sku属于哪一种组合
+        List<SpuSaleAttr> saleAttrList = spuSaleAttrService
+                .getSaleAttrAndValueMarkSku(skuInfo.getSpuId(),skuId);
+        skuDetailTo.setSpuSaleAttrList(saleAttrList);
 
         return skuDetailTo;
     }
