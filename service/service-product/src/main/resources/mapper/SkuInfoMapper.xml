@@ -20,9 +20,14 @@
     id, spu_id, price, sku_name, sku_desc, weight, tm_id, category3_id, sku_default_img, 
     is_sale
   </sql>
+
   <update id="updateIsSale">
     update sku_info set is_sale=#{i} where id=#{skuId}
   </update>
+
+  <select id="selectPriceBySkuId" resultType="java.math.BigDecimal">
+    select price from sku_info where id=#{skuId}
+  </select>
 
 
 </mapper>

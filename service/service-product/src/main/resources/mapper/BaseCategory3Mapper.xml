@@ -12,4 +12,22 @@
     <!--@mbg.generated-->
     id, `name`, category2_id
   </sql>
+
+    <resultMap id="CategoryViewTo" type="com.atguigu.gmall.model.to.CategoryViewTo">
+        <result column="category1_id" property="category1Id"></result>
+        <result column="category1_name" property="category1Name"></result>
+        <result column="category2_id" property="category2Id"></result>
+        <result column="category2_name" property="category2Name"></result>
+        <result column="category3_id" property="category3Id"></result>
+        <result column="category3_name" property="category3Name"></result>
+    </resultMap>
+    <select id="getCategoryView" resultMap="CategoryViewTo" >
+      select c1.id category1_id,c1.name category1_name,
+             c2.id category2_id,c2.name category2_name,
+             c3.id category3_id,c3.name category3_name
+      from base_category3 c3
+             left join base_category2 c2 on c2.id = c3.category2_id
+             left join base_category1 c1 on c1.id = c2.category1_id
+      where c3.id=#{c3Id};
+    </select>
 </mapper>

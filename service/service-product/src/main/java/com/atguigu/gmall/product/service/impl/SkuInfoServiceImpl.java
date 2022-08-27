@@ -4,6 +4,9 @@ import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SkuSaleAttrValue;
+import com.atguigu.gmall.model.to.CategoryViewTo;
+import com.atguigu.gmall.model.to.SkuDetailTo;
+import com.atguigu.gmall.product.mapper.BaseCategory3Mapper;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
 import com.atguigu.gmall.product.service.SkuAttrValueService;
 import com.atguigu.gmall.product.service.SkuImageService;
@@ -13,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,11 +25,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     @Autowired
     SkuInfoMapper skuInfoMapper;
     @Autowired
-    SkuImageService skuImageService;
-    @Autowired
     SkuAttrValueService attrValueService;
     @Autowired
     SkuSaleAttrValueService saleAttrValueService;
+    @Autowired
+    BaseCategory3Mapper baseCategory3Mapper;
+    @Autowired
+    SkuImageService skuImageService;
 
     /**
      * 添加sku
@@ -76,5 +82,28 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
         skuInfoMapper.updateIsSale(skuId,0);
 
         //TODO 2、从es中删除这个商品
+    }
+
+    @Override
+    public SkuDetailTo getSkuDetail(Long skuId) {
+
+        SkuDetailTo skuDetailTo = new SkuDetailTo();
+        //商品的基本信息
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+
+        //查询商品图片
+        List<SkuImage> imageList = skuImageService.getSkuImage(skuId);
+        skuInfo.setSkuImageList(imageList);
+        skuDetailTo.setSkuInfo(skuInfo);
+
+        //查询实时价格
+        BigDecimal price = skuInfoMapper.selectPriceBySkuId(skuId);
+        skuDetailTo.setPrice(price);
+        //当前sku所属的分类信息
+        CategoryViewTo categoryViewTo = baseCategory3Mapper.getCategoryView(skuInfo.getCategory3Id());
+        skuDetailTo.setCategoryView(categoryViewTo);
+
+
+        return skuDetailTo;
     }
 }
