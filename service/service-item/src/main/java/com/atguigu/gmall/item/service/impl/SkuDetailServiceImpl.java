@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @Date 2022/8/26 23:08
  */
 @Service
+@EnableThreadPool
 public class SkuDetailServiceImpl implements SkuDetailService {
 
     @Autowired
