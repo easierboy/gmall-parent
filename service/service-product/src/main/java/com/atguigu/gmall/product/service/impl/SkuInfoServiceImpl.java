@@ -114,4 +114,19 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
 
         return skuDetailTo;
     }
+
+    @Override
+    public SkuInfo getDetailSkuInfo(Long skuId) {
+        return skuInfoMapper.selectById(skuId);
+    }
+
+    @Override
+    public List<SkuImage> getDetailSkuImages(Long skuId) {
+        return skuImageService.getSkuImage(skuId);
+    }
+
+    @Override
+    public BigDecimal get1010Price(Long skuId) {
+        return skuInfoMapper.selectPriceBySkuId(skuId);
+    }
 }
