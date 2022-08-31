@@ -61,27 +61,27 @@ public class CouponInfo extends BaseEntity {
 
    @ApiModelProperty(value = "可以领取的开始日期")
    @TableField("start_time")
-   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "+8:00")
    private Date startTime;
 
    @ApiModelProperty(value = "可以领取的结束日期")
    @TableField("end_time")
-   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "+8:00")
    private Date endTime;
 
    @ApiModelProperty(value = "创建时间")
    @TableField("create_time")
-   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "+8:00")
    private Date createTime;
 
    @ApiModelProperty(value = "修改时间")
    @TableField("operate_time")
-   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "+8:00")
    private Date operateTime;
 
    @ApiModelProperty(value = "过期时间")
    @TableField("expire_time")
-   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "+8:00")
    private Date expireTime;
 
    @ApiModelProperty(value = "优惠券范围描述")

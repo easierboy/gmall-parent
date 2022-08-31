@@ -12,8 +12,12 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 192.168.6.188
+    password: LG123456
+    port: 6379
+  #配置minio配置文件
 
- #配置minio配置文件
 minio:
   endpointUrl: http://192.168.6.188:9000
   accessKey: admin

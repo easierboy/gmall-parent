@@ -1,5 +1,7 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.config.RedissonConfig;
+import com.atguigu.gmall.common.constant.SysRedisConst;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.atguigu.gmall.model.to.SkuDetailTo;
@@ -7,6 +9,7 @@ import com.atguigu.gmall.product.mapper.BaseCategory3Mapper;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
 import com.atguigu.gmall.product.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     SkuImageService skuImageService;
     @Autowired
     SpuSaleAttrService spuSaleAttrService;
+    @Autowired
+    RedissonClient redissonClient;
 
     /**
      * 添加sku
@@ -53,6 +58,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
             skuSaleAttrValue.setSpuId(skuInfo.getSpuId());
         }
         saleAttrValueService.saveBatch(skuSaleAttrValueList);
+
+        //将skuId添加到布隆过滤器中
+        redissonClient.getBloomFilter(SysRedisConst.BLOOM_SKUID).add(skuInfo.getId());
     }
 
     /**
@@ -128,5 +136,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     @Override
     public BigDecimal get1010Price(Long skuId) {
         return skuInfoMapper.selectPriceBySkuId(skuId);
+    }
+
+    @Override
+    public List<Long> findAllSkuId() {
+        return skuInfoMapper.findAllSkuId();
     }
 }
