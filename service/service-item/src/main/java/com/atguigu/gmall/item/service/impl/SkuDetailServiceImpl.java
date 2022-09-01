@@ -3,7 +3,6 @@ package com.atguigu.gmall.item.service.impl;
 import com.atguigu.gmall.common.annotation.EnableThreadPool;
 import com.atguigu.gmall.common.constant.SysRedisConst;
 import com.atguigu.gmall.common.result.Result;
-import com.atguigu.gmall.item.cache.CacheOpsService;
 import com.atguigu.gmall.item.feign.SkuDetailFeignClient;
 import com.atguigu.gmall.item.service.SkuDetailService;
 import com.atguigu.gmall.model.product.SkuImage;
@@ -11,7 +10,7 @@ import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.atguigu.gmall.model.to.SkuDetailTo;
-import io.swagger.annotations.Authorization;
+import com.atguigu.starter.cache.annotation.GmallCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,8 @@ public class SkuDetailServiceImpl implements SkuDetailService {
     @Autowired
     ThreadPoolExecutor executor;
 
-    @Autowired
-    CacheOpsService cacheOpsService;
+//    @Autowired
+//    CacheOpsService cacheOpsService;
 
     public SkuDetailTo getSkuDetail001(Long skuId) {
 
@@ -95,44 +94,55 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         return skuDetailTo;
     }
 
+    @GmallCache(cacheKey =SysRedisConst.SKU_INFO_PREFIX+"#{#params[0]}",
+            bloomName = SysRedisConst.BLOOM_SKUID,
+            bloomValue = "#{#params[0]}",
+            lockName = SysRedisConst.LOCK_SKU_DETAIL+"#{#params[0]}")
     @Override
     public SkuDetailTo getSkuDetail(Long skuId){
-        //1、先查缓存
-        SkuDetailTo cacheData = cacheOpsService.getCacheData(SysRedisConst.SKU_INFO_PREFIX + skuId, SkuDetailTo.class);
-        //2、判断
-        if (cacheData == null){
-            //3、缓存没有
-            //4、先问布隆，是否有这个商品
-            boolean b = cacheOpsService.bloomContains(skuId);
-            if (!b) {
-                //5、布隆说没有，一定没有
-                log.info("布隆判断没有，检测到隐藏攻击风险。。。。。。。。。。。");
-                return null;
-            }else{
-                //6、布隆说有，可能会有，回源查数据
-                boolean lock = cacheOpsService.tryLock(skuId);
-                if (lock){
-                    //7、获取锁成功，查询远程
-                    log.info("[{}]商品 缓存未命中，布隆说有，准备回源.....",skuId);
-                    SkuDetailTo skuDetailTo = getSkuDetail001(skuId);
-                    //8、查到数据放进缓存
-                    cacheOpsService.saveData(SysRedisConst.SKU_INFO_PREFIX + skuId,skuDetailTo);
-                    //9、解锁
-                    cacheOpsService.unlock(skuId);
-                    //10、返回数据
-                    return skuDetailTo;
-                }else {
-                    //7、没获取到锁
-                    try {
-                        Thread.sleep(1000);
-                        return cacheOpsService.getCacheData(SysRedisConst.SKU_INFO_PREFIX + skuId, SkuDetailTo.class);
-                    } catch (InterruptedException e) {
-
-                    }
-                }
-            }
-        }
-        //缓存中有，直接返回
-        return cacheData;
+        SkuDetailTo fromRpc = getSkuDetail001(skuId);
+        return fromRpc;
     }
+
+
+//    @Override
+//    public SkuDetailTo getSkuDetail(Long skuId){
+//        //1、先查缓存
+//        SkuDetailTo cacheData = cacheOpsService.getCacheData(SysRedisConst.SKU_INFO_PREFIX + skuId, SkuDetailTo.class);
+//        //2、判断
+//        if (cacheData == null){
+//            //3、缓存没有
+//            //4、先问布隆，是否有这个商品
+//            boolean b = cacheOpsService.bloomContains(skuId);
+//            if (!b) {
+//                //5、布隆说没有，一定没有
+//                log.info("布隆判断没有，检测到隐藏攻击风险。。。。。。。。。。。");
+//                return null;
+//            }else{
+//                //6、布隆说有，可能会有，回源查数据
+//                boolean lock = cacheOpsService.tryLock(skuId);
+//                if (lock){
+//                    //7、获取锁成功，查询远程
+//                    log.info("[{}]商品 缓存未命中，布隆说有，准备回源.....",skuId);
+//                    SkuDetailTo skuDetailTo = getSkuDetail001(skuId);
+//                    //8、查到数据放进缓存
+//                    cacheOpsService.saveData(SysRedisConst.SKU_INFO_PREFIX + skuId,skuDetailTo);
+//                    //9、解锁
+//                    cacheOpsService.unlock(skuId);
+//                    //10、返回数据
+//                    return skuDetailTo;
+//                }else {
+//                    //7、没获取到锁
+//                    try {
+//                        Thread.sleep(1000);
+//                        return cacheOpsService.getCacheData(SysRedisConst.SKU_INFO_PREFIX + skuId, SkuDetailTo.class);
+//                    } catch (InterruptedException e) {
+//
+//                    }
+//                }
+//            }
+//        }
+//        //缓存中有，直接返回
+//        return cacheData;
+//    }
 }

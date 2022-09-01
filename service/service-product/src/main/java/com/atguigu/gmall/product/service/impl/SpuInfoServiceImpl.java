@@ -12,6 +12,7 @@ import com.atguigu.gmall.product.service.SpuSaleAttrValueService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
      * 添加spu
      * @param spuInfo
      */
+    @Transactional
     @Override
     public void saveSpuInfo(SpuInfo spuInfo) {
         //添加商品spuInfo信息
