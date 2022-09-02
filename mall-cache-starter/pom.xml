@@ -14,7 +14,6 @@
     <groupId>com.atguigu.gmall</groupId>
     <artifactId>mall-cache-starter</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
