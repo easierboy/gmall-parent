@@ -5,6 +5,7 @@ import com.atguigu.starter.cache.annotation.GmallCache;
 import com.atguigu.starter.cache.constant.SysRedisConst;
 import com.atguigu.starter.cache.service.CacheOpsService;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -93,7 +94,8 @@ public class CacheAspect {
                     //6、获取到锁，开始回源
                     result = joinPoint.proceed(joinPoint.getArgs());
                     //7、调用成功，重新保存到缓存
-                    cacheOpsService.saveData(cacheKey,result);
+                    long ttl = getTTL(joinPoint);
+                    cacheOpsService.saveData(cacheKey,result,ttl);
                     return result;
                 }else {
                     Thread.sleep(1000L);
@@ -108,6 +110,23 @@ public class CacheAspect {
 
         //X、缓存中有直接返回
         return cacheData;
+    }
+
+    public GmallCache getAnnotation(ProceedingJoinPoint joinPoint){
+        //1、拿到目标方法上的@GmallCache注解
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        //2、拿到注解
+        return method.getAnnotation(GmallCache.class);
+    }
+
+    /**
+     * 获取缓存过期时间
+     * @param joinPoint
+     * @return
+     */
+    private long getTTL(ProceedingJoinPoint joinPoint) {
+        return getAnnotation(joinPoint).ttl();
     }
 
 
@@ -129,7 +148,7 @@ public class CacheAspect {
         String lockName = cacheAnnotation.lockName(); //lock-方法名
         if(StringUtils.isEmpty(lockName)){
             //没指定锁用方法级别的锁
-            return SysRedisConst.LOCK_PREFIX+method.getName();
+            return SysRedisConst.LOCK_PREFIX+ method.getName();
         }
 
         //4、计算锁值
@@ -144,16 +163,8 @@ public class CacheAspect {
      * @return
      */
     private Object determinBloomValue(ProceedingJoinPoint joinPoint) {
-        //1、拿到目标方法上的@GmallCache注解
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-
-        Method method = signature.getMethod();
-
-        //2、拿到注解
-        GmallCache cacheAnnotation = method.getDeclaredAnnotation(GmallCache.class);
-
-        //3、拿到布隆值表达式
-        String bloomValue = cacheAnnotation.bloomValue();
+        //拿到布隆值表达式
+        String bloomValue = getAnnotation(joinPoint).bloomValue();
 
         Object expression = evaluationExpression(bloomValue, joinPoint, Object.class);
 
@@ -166,17 +177,8 @@ public class CacheAspect {
      * @return
      */
     private String determinBloomName(ProceedingJoinPoint joinPoint) {
-        //1、拿到目标方法上的@GmallCache注解
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 
-        Method method = signature.getMethod();
-
-        //2、拿到注解
-        GmallCache cacheAnnotation = method.getDeclaredAnnotation(GmallCache.class);
-
-        String bloomName = cacheAnnotation.bloomName();
-
-        return bloomName;
+        return getAnnotation(joinPoint).bloomName();
     }
 
 
@@ -200,15 +202,8 @@ public class CacheAspect {
      * @return
      */
     private String determinCacheKey(ProceedingJoinPoint joinPoint) {
-        //1、拿到目标方法上的@GmallCache注解
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 
-        Method method = signature.getMethod();
-
-        //2、拿到注解
-        GmallCache cacheAnnotation = method.getDeclaredAnnotation(GmallCache.class);
-
-        String expression = cacheAnnotation.cacheKey();
+        String expression = getAnnotation(joinPoint).cacheKey();
 
         //3、根据表达式计算缓存键
         String cacheKey = evaluationExpression(expression,joinPoint,String.class);

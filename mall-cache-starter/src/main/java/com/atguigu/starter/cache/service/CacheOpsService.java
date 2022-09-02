@@ -62,8 +62,9 @@ public interface CacheOpsService {
      * 把指定对象使用指定的key保存到redis
      * @param cacheKey
      * @param fromRpc
+     * @param ttl
      */
-    void saveData(String cacheKey, Object fromRpc);
+    void saveData(String cacheKey, Object fromRpc,long ttl);
 
     /**
      * 解锁
