@@ -31,7 +31,8 @@ public class BaseCategory2ServiceImpl  extends ServiceImpl<BaseCategory2Mapper, 
      * 查询所有分类并封装成树形菜单结构
      * @return
      */
-    @GmallCache(cacheKey = SysRedisConst.CACHE_CATEGORYS)
+    @GmallCache(cacheKey = SysRedisConst.CACHE_CATEGORYS,
+                            ttl = 60*60*24*365l)
     @Override
     public List<CategoryTreeTo> getAllCategoryWithTree() {
         List<CategoryTreeTo>  list = baseCategory2Mapper.getAllCategoryWithTree();

@@ -9,6 +9,7 @@
         <module>service</module>
         <module>service-gateway</module>
         <module>common/feign-client</module>
+        <module>service-elasticsearch</module>
     </modules>
 
     <!--引入spring boot 父工程-->

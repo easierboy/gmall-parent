@@ -2,6 +2,9 @@ package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.common.config.RedissonConfig;
 import com.atguigu.gmall.common.constant.SysRedisConst;
+import com.atguigu.gmall.feign.search.SearchFeignClient;
+import com.atguigu.gmall.model.list.Goods;
+import com.atguigu.gmall.model.list.SearchAttr;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.atguigu.gmall.model.to.SkuDetailTo;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,7 +38,12 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     SpuSaleAttrService spuSaleAttrService;
     @Autowired
     RedissonClient redissonClient;
-
+    @Autowired
+    SearchFeignClient searchFeignClient;
+    @Autowired
+    BaseTrademarkService baseTrademarkService;
+    @Autowired
+    SkuAttrValueService skuAttrValueService;
     /**
      * 添加sku
      * @param skuInfo
@@ -73,8 +82,46 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
     public void onSale(Long skuId) {
         //1、改数据库 sku_info 这个skuId的is_sale； 1上架  0下架
         skuInfoMapper.updateIsSale(skuId,1);
+        
+        //2、给es中保存这个商品，商品就能被检索到了
+        Goods goods = getGoodsBySkuId(skuId);
+        searchFeignClient.saveGoods(goods);
+    }
 
-        //TODO 2、从es中添加这个商品
+    private Goods getGoodsBySkuId(Long skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+
+        Goods goods = new Goods();
+        goods.setId(skuId);
+        goods.setDefaultImg(skuInfo.getSkuDefaultImg());
+        goods.setTitle(skuInfo.getSkuName());
+        goods.setPrice(skuInfo.getPrice().doubleValue());
+        goods.setCreateTime(new Date());
+        goods.setTmId(skuInfo.getTmId());
+
+
+        BaseTrademark trademark = baseTrademarkService.getById(skuInfo.getTmId());
+        goods.setTmName(trademark.getTmName());
+        goods.setTmLogoUrl(trademark.getLogoUrl());
+
+
+        Long category3Id = skuInfo.getCategory3Id();
+        CategoryViewTo view = baseCategory3Mapper.getCategoryView(category3Id);
+        goods.setCategory1Id(view.getCategory1Id());
+        goods.setCategory1Name(view.getCategory1Name());
+        goods.setCategory2Id(view.getCategory2Id());
+        goods.setCategory2Name(view.getCategory2Name());
+        goods.setCategory3Id(view.getCategory3Id());
+        goods.setCategory3Name(view.getCategory3Name());
+
+        goods.setHotScore(0L); //TODO 热度分更新
+
+        //查当前sku所有平台属性名和值
+        List<SearchAttr> attrs = skuAttrValueService.getSkuAttrNameAndValue(skuId);
+        goods.setAttrs(attrs);
+
+
+        return goods;
     }
 
     /**
@@ -87,7 +134,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo> impl
         ///1、改数据库 sku_info 这个skuId的is_sale； 1上架  0下架
         skuInfoMapper.updateIsSale(skuId,0);
 
-        //TODO 2、从es中删除这个商品
+        //2、给es中删除这个商品
+        searchFeignClient.deleteGoods(skuId);
     }
 
     @Override
